@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Adam's Workout Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Inter+Tight:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f5f5f3;
+  --surface: #ffffff;
+  --surface2: #f0f0ee;
+  --border: #e4e4e0;
+  --border2: #d0d0cc;
+  --text: #1a1a18;
+  --text2: #5a5a56;
+  --text3: #9a9a94;
+  --accent: #2563eb;
+  --accent-bg: #eff6ff;
+  --accent-border: #bfdbfe;
+  --green: #16a34a;
+  --green-bg: #f0fdf4;
+  --green-border: #bbf7d0;
+  --orange: #ea580c;
+  --orange-bg: #fff7ed;
+  --orange-border: #fed7aa;
+  --red: #dc2626;
+  --red-bg: #fef2f2;
+  --purple: #7c3aed;
+  --purple-bg: #f5f3ff;
+  --r: 10px;
+  --rs: 7px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.05);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { overflow-x: hidden; }
+body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; min-height: 100vh; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+.app { max-width: 1060px; margin: 0 auto; padding: 0 16px 100px; }
+
+/* HEADER */
+header { padding: 36px 0 28px; border-bottom: 1px solid var(--border); margin-bottom: 28px; }
+.header-top { display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+.header-left h1 { font-family: 'Inter Tight', sans-serif; font-size: clamp(22px, 4vw, 32px); font-weight: 700; color: var(--text); letter-spacing: -0.5px; }
+.header-left h1 span { color: var(--accent); }
+.header-meta { display: flex; align-items: center; gap: 12px; margin-top: 8px; flex-wrap: wrap; }
+.phase-pill { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 500; }
+.p1 { background: var(--accent-bg); color: var(--accent); border: 1px solid var(--accent-border); }
+.p2 { background: var(--orange-bg); color: var(--orange); border: 1px solid var(--orange-border); }
+.p3 { background: var(--red-bg); color: var(--red); border: 1px solid #fecaca; }
+.pr { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-border); }
+
+.week-sel { display: flex; align-items: center; gap: 10px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 10px 16px; box-shadow: var(--shadow); }
+.week-sel label { font-size: 11px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: 0.08em; }
+.week-sel select { background: transparent; border: none; color: var(--accent); font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 600; cursor: pointer; outline: none; appearance: none; }
+.week-sel select option { background: white; color: var(--text); }
+
+/* TABS */
+.tabs { display: flex; gap: 4px; margin-bottom: 24px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 5px; box-shadow: var(--shadow); }
+.tab { flex: 1; padding: 10px 8px; border: none; border-radius: var(--rs); cursor: pointer; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500; transition: all 0.18s; background: transparent; color: var(--text2); text-align: center; line-height: 1.35; }
+.tab:hover { background: var(--surface2); color: var(--text); }
+.tab.active { background: var(--accent); color: white; box-shadow: 0 1px 4px rgba(37,99,235,0.3); }
+.tab .te { display: block; font-size: 17px; margin-bottom: 2px; }
+.tab .tl { display: block; font-size: 10px; opacity: 0.8; }
+
+/* SECTION */
+.section { margin-bottom: 20px; border-radius: var(--r); overflow: hidden; box-shadow: var(--shadow); border: 1px solid var(--border); background: var(--surface); }
+.sec-hdr { display: flex; align-items: center; gap: 10px; padding: 11px 16px; background: var(--surface2); border-bottom: 1px solid var(--border); }
+.sec-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+.dp { background: var(--accent); } .dpu { background: #0891b2; } .ds { background: var(--green); } .da { background: var(--purple); }
+.dl { background: #0891b2; } .dh { background: var(--orange); } .dc { background: var(--green); }
+.dco { background: var(--accent); } .dt { background: var(--purple); } .dca { background: var(--red); }
+.dw { background: var(--orange); } .dstr { background: var(--green); } .dcd { background: var(--purple); }
+.sec-title { font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text2); }
+.sec-right { margin-left: auto; font-size: 11px; font-weight: 600; color: var(--text3); }
+
+/* COLUMN HEADERS */
+.col-hdrs { display: grid; grid-template-columns: 1fr 64px 80px 88px 88px 88px; background: var(--surface2); border-bottom: 1px solid var(--border); }
+.ch { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text3); text-align: center; padding: 7px 8px; }
+.ch:first-child { text-align: left; padding-left: 16px; }
+
+/* EXERCISE ROWS */
+.ex-list { }
+.ex-row { display: grid; grid-template-columns: 1fr 64px 80px 88px 88px 88px; align-items: center; border-bottom: 1px solid var(--border); transition: background 0.12s; }
+.ex-row:last-child { border-bottom: none; }
+.ex-row:hover { background: #fafaf9; }
+.ex-row.locked { opacity: 0.38; pointer-events: none; }
+
+.ex-n { padding: 13px 16px; }
+.ex-name-text { font-size: 14px; font-weight: 500; color: var(--text); line-height: 1.3; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.ex-note { font-size: 11px; color: var(--text3); font-weight: 400; display: block; margin-top: 3px; }
+
+.yt-link { display: inline-flex; align-items: center; gap: 3px; color: #dc2626; text-decoration: none; font-size: 10px; font-weight: 600; letter-spacing: 0.03em; opacity: 0.75; transition: opacity 0.15s; white-space: nowrap; flex-shrink: 0; }
+.yt-link:hover { opacity: 1; }
+.yt-link svg { width: 11px; height: 11px; flex-shrink: 0; }
+
+.ex-stat { padding: 10px 8px; text-align: center; border-left: 1px solid var(--border); }
+.stat-label { font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text3); display: block; margin-bottom: 3px; }
+.stat-val { font-size: 14px; font-weight: 600; color: var(--text2); }
+
+.ex-ic { padding: 8px 7px; border-left: 1px solid var(--border); }
+.il { font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text3); display: block; margin-bottom: 4px; }
+.ex-in { width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; color: var(--text); font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 500; padding: 6px 6px; text-align: center; outline: none; transition: all 0.15s; }
+.ex-in:focus { border-color: var(--accent); background: var(--accent-bg); box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
+.ex-in::placeholder { color: var(--text3); font-size: 12px; font-weight: 400; }
+.ex-in.hv { color: var(--accent); font-weight: 600; border-color: var(--accent-border); background: var(--accent-bg); }
+.ex-in.sets-done.hv { color: var(--green); border-color: var(--green-border); background: var(--green-bg); }
+
+/* RECOVERY */
+.rec-intro { display: flex; background: var(--green-bg); border: 1px solid var(--green-border); border-radius: var(--r); overflow: hidden; margin-bottom: 20px; flex-wrap: wrap; box-shadow: var(--shadow); }
+.rb { flex: 1; min-width: 130px; padding: 16px 20px; border-right: 1px solid var(--green-border); }
+.rb:last-child { border-right: none; }
+.rbl { font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--green); margin-bottom: 5px; }
+.rbv { font-size: 15px; font-weight: 700; color: var(--text); }
+.rbs { font-size: 12px; color: var(--text2); margin-top: 2px; }
+.rpbar { height: 4px; background: rgba(22,163,74,0.15); border-radius: 3px; margin-top: 10px; overflow: hidden; }
+.rpfill { height: 100%; background: var(--green); border-radius: 3px; transition: width 0.4s; }
+
+.rec-list { }
+.rec-row { display: grid; grid-template-columns: 52px 1fr 120px; align-items: center; border-bottom: 1px solid var(--border); background: var(--surface); transition: background 0.12s; cursor: pointer; user-select: none; }
+.rec-row:last-child { border-bottom: none; }
+.rec-row:hover { background: #fafaf9; }
+.rec-row.done { background: var(--green-bg); }
+.rchk { display: flex; align-items: center; justify-content: center; }
+.cbox { width: 20px; height: 20px; border-radius: 5px; border: 2px solid var(--border2); display: flex; align-items: center; justify-content: center; transition: all 0.15s; flex-shrink: 0; }
+.rec-row.done .cbox { background: var(--green); border-color: var(--green); }
+.cmark { color: white; font-size: 12px; display: none; font-weight: 700; }
+.rec-row.done .cmark { display: block; }
+.rec-name { padding: 13px 12px 13px 0; }
+.rec-name-text { font-size: 14px; font-weight: 500; color: var(--text); display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.rec-row.done .rec-name-text { color: var(--text2); }
+.rnt { font-size: 11px; color: var(--text3); font-weight: 400; display: block; margin-top: 3px; }
+.rec-dur { padding: 10px 16px; text-align: right; font-size: 13px; font-weight: 500; color: var(--text2); border-left: 1px solid var(--border); }
+.rec-row.done .rec-dur { color: var(--text3); }
+
+/* PROGRESS */
+.prog-sec { margin-top: 40px; padding-top: 32px; border-top: 1px solid var(--border); }
+.prog-title { font-family: 'Inter Tight', sans-serif; font-size: 20px; font-weight: 700; letter-spacing: -0.3px; margin-bottom: 4px; }
+.prog-sub { font-size: 13px; color: var(--text2); margin-bottom: 20px; }
+.prog-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 12px; }
+.pc { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 16px; box-shadow: var(--shadow); transition: box-shadow 0.2s, border-color 0.2s; }
+.pc:hover { box-shadow: var(--shadow-md); border-color: var(--accent-border); }
+.pc-day { font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text3); margin-bottom: 4px; }
+.pc-name { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 12px; line-height: 1.3; }
+.pc-wks { display: grid; grid-template-columns: repeat(8, 1fr); gap: 3px; margin-bottom: 10px; }
+.pwd { height: 4px; border-radius: 2px; background: var(--border); }
+.pwd.on { background: var(--accent); }
+.pc-best { font-size: 22px; font-weight: 700; color: var(--accent); font-family: 'Inter Tight', sans-serif; }
+.pc-bl { font-size: 10px; font-weight: 500; color: var(--text3); text-transform: uppercase; letter-spacing: 0.06em; }
+
+/* SAVE BAR */
+.save-bar { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255,255,255,0.95); backdrop-filter: blur(12px); border-top: 1px solid var(--border); padding: 12px 28px; display: flex; align-items: center; justify-content: space-between; z-index: 100; gap: 12px; flex-wrap: wrap; box-shadow: 0 -4px 20px rgba(0,0,0,0.06); }
+.si { font-size: 12px; color: var(--text3); }
+.ss { font-size: 12px; font-weight: 500; color: var(--green); opacity: 0; transition: opacity 0.3s; }
+.ss.on { opacity: 1; }
+.btn { padding: 9px 20px; border-radius: var(--rs); border: none; cursor: pointer; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600; transition: all 0.15s; }
+.btn-p { background: var(--accent); color: white; box-shadow: 0 1px 3px rgba(37,99,235,0.3); }
+.btn-p:hover { background: #1d4ed8; box-shadow: 0 3px 8px rgba(37,99,235,0.35); transform: translateY(-1px); }
+.btn-g { background: var(--surface2); color: var(--text2); border: 1px solid var(--border); }
+.btn-g:hover { background: var(--border); color: var(--text); }
+
+@media (max-width: 700px) {
+  .ex-row { grid-template-columns: 1fr 48px 60px 70px 70px 70px; }
+  .col-hdrs { grid-template-columns: 1fr 48px 60px 70px 70px 70px; }
+  .ex-n { padding: 11px 10px; }
+  .ex-name-text { font-size: 13px; }
+  .stat-val { font-size: 13px; }
+  .tab .tl { display: none; }
+  .prog-grid { grid-template-columns: 1fr 1fr; }
+  .rec-row { grid-template-columns: 44px 1fr 88px; }
+  .fab-area { bottom: 20px; right: 16px; }
+}
+@media (max-width: 430px) {
+  .ex-row { grid-template-columns: 1fr 42px 56px 64px 64px 64px; }
+  .col-hdrs { grid-template-columns: 1fr 42px 56px 64px 64px 64px; }
+  .ex-in { font-size: 13px; }
+  .il { font-size: 8px; }
+  .ch { font-size: 9px; padding: 7px 4px; }
+  .ch:first-child { padding-left: 10px; }
+  .ex-n { padding: 10px 10px; }
+  .tabs { gap: 3px; padding: 4px; }
+  .tab { font-size: 12px; padding: 9px 4px; }
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="header-top">
+      <div class="header-left">
+        <h1>Adam's <span>Workout</span> Tracker</h1>
+        <div class="header-meta">
+          <div id="pbadge" class="phase-pill p1">🔵 Phase 1 — Learn the Movements</div>
+        </div>
+      </div>
+      <div class="week-sel">
+        <label>Week</label>
+        <select id="wksel">
+          <option>1</option><option>2</option><option>3</option><option>4</option>
+          <option>5</option><option>6</option><option>7</option><option>8</option>
+        </select>
+      </div>
+    </div>
+  </header>
+
+  <div class="tabs">
+    <button class="tab active" onclick="switchDay('monday')"><span class="te">💪</span><span>Monday</span><span class="tl">Upper Body</span></button>
+    <button class="tab" onclick="switchDay('wednesday')"><span class="te">🦵</span><span>Wednesday</span><span class="tl">Lower + Core</span></button>
+    <button class="tab" onclick="switchDay('friday')"><span class="te">⚡</span><span>Friday</span><span class="tl">Full Body</span></button>
+    <button class="tab" onclick="switchDay('recovery')"><span class="te">🤸</span><span>Tue/Thu/Sat</span><span class="tl">Stretch + Core</span></button>
+  </div>
+
+  <div id="content"></div>
+
+  <div class="prog-sec" id="progsec">
+    <div class="prog-title">Progress Tracker</div>
+    <div class="prog-sub">Best logged weight for key lifts across all 8 weeks</div>
+    <div id="proggrid" class="prog-grid"></div>
+  </div>
+</div>
+
+<div class="fab-area">
+  <div class="fab-saved" id="ss">✓ Saved</div>
+  <div class="fab-menu">
+    <button class="btn btn-g" onclick="clearDay()">Clear</button>
+    <button class="btn btn-p" onclick="saveData()">Save</button>
+  </div>
+</div>
+
+<script>
+const YT_ICON=`<svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1C24 15.9 24 12 24 12s0-3.9-.5-5.8zM9.6 15.6V8.4l6.3 3.6-6.3 3.6z"/></svg>`;
+
+const PLAN = {
+  monday:{label:"Monday — Upper Body",sections:[
+    {t:"Section 1 — Horizontal Push/Pull (Superset A/B)",d:"dp",ex:[
+      {id:"mon_bench",n:"A) Dumbbell Bench Press",s:"3",r:"10",yt:"https://www.youtube.com/results?search_query=dumbbell+bench+press+form"},
+      {id:"mon_meadows",n:"B) Meadows Row (each side)",s:"3",r:"10 each",nt:"Rest 60s between pairs",yt:"https://www.youtube.com/results?search_query=meadows+row+form"},
+    ]},
+    {t:"Section 2 — Vertical Push/Pull (Superset A/B)",d:"dpu",ex:[
+      {id:"mon_landmine",n:"A) Landmine Press",s:"3",r:"10",yt:"https://www.youtube.com/results?search_query=landmine+press+form"},
+      {id:"mon_pulldown",n:"B) Lat Pulldown",s:"3",r:"10",yt:"https://www.youtube.com/results?search_query=lat+pulldown+form"},
+    ]},
+    {t:"Section 3 — Shoulder Health + Chest Isolation",d:"ds",ex:[
+      {id:"mon_trxfly",n:"TRX Chest Fly",s:"3",r:"12",yt:"https://www.youtube.com/results?search_query=TRX+chest+fly+form"},
+      {id:"mon_facepull",n:"Face Pulls",s:"3",r:"15",yt:"https://www.youtube.com/results?search_query=face+pulls+form"},
+      {id:"mon_pullpart",n:"Banded Pull-Apart",s:"3",r:"15",yt:"https://www.youtube.com/results?search_query=banded+pull+apart+form"},
+    ]},
+    {t:"Section 4 — Arms Finisher (Superset A/B)",d:"da",ex:[
+      {id:"mon_hammer",n:"A) Hammer Curls",s:"3",r:"12",yt:"https://www.youtube.com/results?search_query=hammer+curls+form"},
+      {id:"mon_pushdown",n:"B) Tricep Pushdown (cable)",s:"3",r:"12",nt:"Superset — rest 60s between pairs",yt:"https://www.youtube.com/results?search_query=tricep+pushdown+cable+form"},
+      {id:"mon_preacher",n:"A) Preacher Curl Machine",s:"2",r:"12",yt:"https://www.youtube.com/results?search_query=preacher+curl+form"},
+      {id:"mon_ohtricep",n:"B) Overhead Tricep Extension",s:"2",r:"12",yt:"https://www.youtube.com/results?search_query=overhead+tricep+extension+form"},
+      {id:"mon_skull",n:"Skull Crushers",s:"2",r:"10",lock:[1,2],nt:"Weeks 5–8 only",yt:"https://www.youtube.com/results?search_query=skull+crushers+form"},
+    ]},
+  ]},
+  wednesday:{label:"Wednesday — Lower Body + Core",sections:[
+    {t:"Section 1 — Legs",d:"dl",ex:[
+      {id:"wed_bss",n:"KB Bulgarian Split Squat",s:"3→4",r:"8→10 each",nt:"Add KB from week 2",yt:"https://www.youtube.com/results?search_query=bulgarian+split+squat+form"},
+      {id:"wed_rdl",n:"Romanian Deadlift",s:"3",r:"10→12",yt:"https://www.youtube.com/results?search_query=romanian+deadlift+form"},
+      {id:"wed_legpress",n:"Leg Press",s:"3",r:"12",yt:"https://www.youtube.com/results?search_query=leg+press+form"},
+      {id:"wed_calf",n:"Calf Raises",s:"3",r:"15",yt:"https://www.youtube.com/results?search_query=calf+raises+form"},
+    ]},
+    {t:"Section 2 — Hamstrings",d:"dh",ex:[
+      {id:"wed_nordic",n:"Nordic Hamstring Curl",s:"3",r:"5→8→10",nt:"Slow controlled negatives only",yt:"https://www.youtube.com/results?search_query=nordic+hamstring+curl+form"},
+    ]},
+    {t:"Section 3 — Core + Carries",d:"dc",ex:[
+      {id:"wed_pallof",n:"Pallof Press with Rotation",s:"3",r:"10→12→15 each",yt:"https://www.youtube.com/results?search_query=pallof+press+rotation+form"},
+      {id:"wed_deadbug",n:"Dead Bug",s:"3",r:"10",yt:"https://www.youtube.com/results?search_query=dead+bug+exercise+form"},
+      {id:"wed_farmer",n:"Farmer's Carry",s:"3",r:"30m",lock:[1],nt:"Weeks 3–8 only",yt:"https://www.youtube.com/results?search_query=farmers+carry+form"},
+      {id:"wed_plank",n:"Plank",s:"3",r:"30–45 sec",yt:"https://www.youtube.com/results?search_query=plank+form"},
+    ]},
+  ]},
+  friday:{label:"Friday — Full Body + Cardio",sections:[
+    {t:"Section 1 — Full Body Compound",d:"dco",ex:[
+      {id:"fri_lmsqpress",n:"Landmine Squat-to-Press",s:"3→4",r:"10→8",yt:"https://www.youtube.com/results?search_query=landmine+squat+to+press+form"},
+      {id:"fri_trap",n:"Trap Bar Deadlift",s:"3→4",r:"8→6",lock:[1],nt:"Weeks 3–8 only",yt:"https://www.youtube.com/results?search_query=trap+bar+deadlift+form"},
+      {id:"fri_dbrow",n:"Single-Arm DB Row",s:"3",r:"10 each",yt:"https://www.youtube.com/results?search_query=single+arm+dumbbell+row+form"},
+      {id:"fri_stepup",n:"Step-Ups (each leg)",s:"3",r:"10 each",yt:"https://www.youtube.com/results?search_query=step+ups+exercise+form"},
+    ]},
+    {t:"Section 2 — Turkish Get-Up",d:"dt",ex:[
+      {id:"fri_tgu",n:"Turkish Get-Up (each side)",s:"3",r:"3→4 each",nt:"Start light — this is a skill movement",yt:"https://www.youtube.com/results?search_query=turkish+get+up+form"},
+    ]},
+    {t:"Section 3 — Cardio Finisher",d:"dca",ex:[
+      {id:"fri_kbswing",n:"KB Swings",s:"3→5",r:"15→20",yt:"https://www.youtube.com/results?search_query=kettlebell+swing+form"},
+      {id:"fri_sled",n:"Sled Push",s:"4→6",r:"20m",lock:[1],nt:"Weeks 3–8 only",yt:"https://www.youtube.com/results?search_query=sled+push+form"},
+      {id:"fri_ropes",n:"Battle Ropes",s:"3",r:"30s on/30s off",lock:[1,2],nt:"Weeks 5–8 only",yt:"https://www.youtube.com/results?search_query=battle+ropes+form"},
+      {id:"fri_row",n:"Rowing Machine",s:"1",r:"8–10 min",yt:"https://www.youtube.com/results?search_query=rowing+machine+form+technique"},
+    ]},
+  ]},
+};
+
+const RECOVERY = {sections:[
+  {t:"Dynamic Warm-Up — 5 min BEFORE you play",d:"dw",ex:[
+    {id:"r_armcircles",n:"Arm Circles",dur:"10 each way",nt:"Small to large — wake up shoulders before serves",yt:"https://www.youtube.com/results?search_query=arm+circles+warmup"},
+    {id:"r_legswfb",n:"Leg Swings — front/back",dur:"10 each leg",nt:"Hold wall for balance · loosens hip flexors + hamstrings",yt:"https://www.youtube.com/results?search_query=leg+swings+front+back+warmup"},
+    {id:"r_legswss",n:"Leg Swings — side to side",dur:"10 each leg",nt:"Critical for lateral movement on the squash court",yt:"https://www.youtube.com/results?search_query=leg+swings+side+to+side+warmup"},
+    {id:"r_lungerot",n:"Walking Lunges with Rotation",dur:"8 each leg",nt:"Rotate torso toward front leg · opens hips + thoracic spine",yt:"https://www.youtube.com/results?search_query=walking+lunge+with+rotation"},
+    {id:"r_inchworm",n:"Inchworms",dur:"5 reps",nt:"Walk hands to plank, walk feet up · full-body prep",yt:"https://www.youtube.com/results?search_query=inchworm+exercise"},
+    {id:"r_shuffle",n:"Lateral Shuffles",dur:"20 seconds",nt:"Low athletic stance · mimics court movement",yt:"https://www.youtube.com/results?search_query=lateral+shuffle+warmup"},
+    {id:"r_catcow",n:"Cat-Cow",dur:"8 reps",nt:"Slow and deliberate · spine mobility before impact",yt:"https://www.youtube.com/results?search_query=cat+cow+stretch"},
+  ]},
+  {t:"Full-Body Stretch — 10 min AFTER you play",d:"dstr",ex:[
+    {id:"r_pigeon",n:"Pigeon Pose (each side)",dur:"45 sec",nt:"Glutes + deep hip rotators · #1 stretch for lateral sports",yt:"https://www.youtube.com/results?search_query=pigeon+pose+stretch"},
+    {id:"r_couch",n:"Couch Stretch / Hip Flexor",dur:"45 sec each",nt:"Back foot on wall · opens locked-up hip flexors",yt:"https://www.youtube.com/results?search_query=couch+stretch+hip+flexor"},
+    {id:"r_hamstring",n:"Hamstring Stretch (each side)",dur:"45 sec",nt:"Long exhale into the stretch · protects low back",yt:"https://www.youtube.com/results?search_query=hamstring+stretch"},
+    {id:"r_quad",n:"Standing Quad Stretch",dur:"30 sec each",nt:"Grab ankle behind you · balance counts as core work",yt:"https://www.youtube.com/results?search_query=standing+quad+stretch"},
+    {id:"r_figure4",n:"Figure-4 Glute Stretch",dur:"30 sec each",nt:"Lying on back · ankle over opposite knee, pull toward chest",yt:"https://www.youtube.com/results?search_query=figure+4+glute+stretch"},
+    {id:"r_calf",n:"Standing Calf Stretch",dur:"30 sec each",nt:"Back heel pressed down · racket sports tax calves hard",yt:"https://www.youtube.com/results?search_query=standing+calf+stretch"},
+    {id:"r_thoracic",n:"Thoracic Spine Rotation",dur:"10 reps each",nt:"On all fours, hand behind head, rotate open — unlocks torso",yt:"https://www.youtube.com/results?search_query=thoracic+spine+rotation+stretch"},
+    {id:"r_shoulder",n:"Cross-Body Shoulder Stretch",dur:"30 sec each",nt:"Gentle · rotator cuff care after serving and smashing",yt:"https://www.youtube.com/results?search_query=cross+body+shoulder+stretch"},
+    {id:"r_doorway",n:"Doorway Chest Stretch",dur:"45 sec",nt:"Forearms on door frame, step through · opens tight pecs",yt:"https://www.youtube.com/results?search_query=doorway+chest+stretch"},
+    {id:"r_wrist",n:"Wrist Flexor + Extensor",dur:"20 sec each",nt:"Palm up then palm down · prevents racquet elbow",yt:"https://www.youtube.com/results?search_query=wrist+flexor+extensor+stretch"},
+    {id:"r_child",n:"Child's Pose",dur:"60 sec",nt:"Long breaths · your cooldown full stop",yt:"https://www.youtube.com/results?search_query=childs+pose+stretch"},
+  ]},
+  {t:"Core Circuit — 8–10 min AFTER stretching · 2–3 rounds",d:"dcd",ex:[
+    {id:"r_deadbug",n:"Dead Bug",dur:"10 each side",nt:"Low back pressed to floor · slow and controlled",yt:"https://www.youtube.com/results?search_query=dead+bug+exercise+form"},
+    {id:"r_birddog",n:"Bird Dog",dur:"10 each side",nt:"Opposite arm + leg · pause 1 sec at top · anti-rotation",yt:"https://www.youtube.com/results?search_query=bird+dog+exercise+form"},
+    {id:"r_sideplank",n:"Side Plank (each side)",dur:"20–30 sec",nt:"Stack feet · obliques power your squash swing",yt:"https://www.youtube.com/results?search_query=side+plank+form"},
+    {id:"r_plank",n:"Plank",dur:"30–45 sec",nt:"Ribs tucked, glutes squeezed · quality over duration",yt:"https://www.youtube.com/results?search_query=plank+form"},
+    {id:"r_hollow",n:"Hollow Body Hold",dur:"20–30 sec",nt:"Low back glued down · bend knees if needed",yt:"https://www.youtube.com/results?search_query=hollow+body+hold+form"},
+    {id:"r_russian",n:"Russian Twists",dur:"20 total",nt:"Bodyweight fine · add light med ball from week 5",yt:"https://www.youtube.com/results?search_query=russian+twists+form"},
+  ]},
+]};
+
+const KEY_LIFTS=[
+  {id:"mon_bench",n:"DB Bench Press",day:"monday"},
+  {id:"mon_landmine",n:"Landmine Press",day:"monday"},
+  {id:"mon_meadows",n:"Meadows Row",day:"monday"},
+  {id:"mon_pulldown",n:"Lat Pulldown",day:"monday"},
+  {id:"mon_hammer",n:"Hammer Curls",day:"monday"},
+  {id:"wed_bss",n:"Bulgarian Split Squat",day:"wednesday"},
+  {id:"wed_rdl",n:"Romanian Deadlift",day:"wednesday"},
+  {id:"wed_legpress",n:"Leg Press",day:"wednesday"},
+  {id:"fri_lmsqpress",n:"Landmine Squat-to-Press",day:"friday"},
+  {id:"fri_trap",n:"Trap Bar Deadlift",day:"friday"},
+  {id:"fri_tgu",n:"Turkish Get-Up",day:"friday"},
+  {id:"fri_kbswing",n:"KB Swings (weight)",day:"friday"},
+];
+
+const SEED={
+  "monday_w1_mon_bench_weight":"135","monday_w1_mon_bench_reps":"10x4",
+  "monday_w1_mon_landmine_weight":"20","monday_w1_mon_landmine_reps":"10x3",
+  "monday_w1_mon_pulldown_weight":"88","monday_w1_mon_pulldown_reps":"10x3",
+  "monday_w1_mon_trxfly_weight":"N/A","monday_w1_mon_trxfly_reps":"10x3",
+  "monday_w1_mon_facepull_weight":"33","monday_w1_mon_facepull_reps":"15x3",
+  "monday_w1_mon_hammer_weight":"20","monday_w1_mon_hammer_reps":"12x3",
+  "monday_w1_mon_pushdown_weight":"27","monday_w1_mon_pushdown_reps":"12x3",
+  "monday_w1_mon_preacher_weight":"30","monday_w1_mon_preacher_reps":"10x3",
+  "monday_w1_mon_ohtricep_weight":"17.5","monday_w1_mon_ohtricep_reps":"10",
+  "friday_w1_fri_lmsqpress_weight":"45","friday_w1_fri_lmsqpress_reps":"10x3",
+  "friday_w1_fri_trap_weight":"50","friday_w1_fri_trap_reps":"10x3",
+  "friday_w1_fri_dbrow_weight":"40","friday_w1_fri_dbrow_reps":"10x3",
+  "friday_w1_fri_stepup_weight":"0","friday_w1_fri_stepup_reps":"10x3",
+  "friday_w1_fri_tgu_weight":"6","friday_w1_fri_kbswing_weight":"24",
+};
+
+let day='monday',week=1,data={};
+function load(){try{const s=localStorage.getItem('wt_v3');data=s?JSON.parse(s):{...SEED};if(!s)save()}catch(e){data={...SEED}}}
+function save(){try{localStorage.setItem('wt_v3',JSON.stringify(data))}catch(e){}}
+function gv(d,w,id,f){return data[`${d}_w${w}_${id}_${f}`]||''}
+function sv(d,w,id,f,v){const k=`${d}_w${w}_${id}_${f}`;if(v==='')delete data[k];else data[k]=v}
+function grd(w,id){return!!data[`rec_w${w}_${id}`]}
+function srd(w,id,v){const k=`rec_w${w}_${id}`;if(!v)delete data[k];else data[k]=true}
+function phase(w){
+  if(w<=2)return{l:'🔵 Phase 1 — Learn the Movements',c:'p1'};
+  if(w<=4)return{l:'🔵 Phase 1 — Build the Base',c:'p1'};
+  if(w<=6)return{l:'🟠 Phase 2 — Increase Intensity',c:'p2'};
+  return{l:'🔴 Phase 3 — Peak & Push',c:'p3'};
+}
+function locked(ex,w){if(!ex.lock)return false;const p=w<=2?1:w<=4?2:0;return ex.lock.includes(p)}
+
+function switchDay(d){
+  day=d;
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',['monday','wednesday','friday','recovery'][i]===d));
+  document.getElementById('progsec').style.display=d==='recovery'?'none':'';
+  if(d==='recovery'){
+    renderRecovery();
+    const b=document.getElementById('pbadge');
+    b.textContent='🟢 Recovery — Same routine every week';
+    b.className='phase-pill pr';
+  } else {
+    renderWorkout();
+  }
+}
+
+function ytLink(url){
+  if(!url)return'';
+  return`<a class="yt-link" href="${url}" target="_blank" rel="noopener" onclick="event.stopPropagation()">${YT_ICON}Form</a>`;
+}
+
+function renderWorkout(){
+  const plan=PLAN[day];
+  let h='';
+  plan.sections.forEach(sec=>{
+    h+=`<div class="section">
+      <div class="sec-hdr"><div class="sec-dot ${sec.d}"></div><span class="sec-title">${sec.t}</span></div>
+      <div class="col-hdrs">
+        <div class="ch">Exercise</div>
+        <div class="ch">Sets</div>
+        <div class="ch">Reps</div>
+        <div class="ch">Weight</div>
+        <div class="ch">Sets Done</div>
+        <div class="ch">Reps Done</div>
+      </div>`;
+    sec.ex.forEach(ex=>{
+      const lk=locked(ex,week);
+      const wv=gv(day,week,ex.id,'weight');
+      const sv2=gv(day,week,ex.id,'sets');
+      const rv=gv(day,week,ex.id,'reps');
+      h+=`<div class="ex-row${lk?' locked':''}">
+        <div class="ex-n">
+          <div class="ex-name-text">${ex.n}${ytLink(ex.yt)}</div>
+          ${ex.nt?`<span class="ex-note">${ex.nt}</span>`:''}
+        </div>
+        <div class="ex-stat"><span class="stat-label">Target</span><span class="stat-val">${ex.s}</span></div>
+        <div class="ex-stat"><span class="stat-label">Target</span><span class="stat-val">${ex.r}</span></div>
+        <div class="ex-ic"><span class="il">Weight</span>
+          <input class="ex-in${wv?' hv':''}" type="text" inputmode="decimal" placeholder="lbs" value="${wv}" data-id="${ex.id}" data-f="weight" ${lk?'disabled':''} oninput="inp(this)">
+        </div>
+        <div class="ex-ic"><span class="il">Sets Done</span>
+          <input class="ex-in sets-done${sv2?' hv':''}" type="text" inputmode="numeric" placeholder="${ex.s}" value="${sv2}" data-id="${ex.id}" data-f="sets" ${lk?'disabled':''} oninput="inp(this)">
+        </div>
+        <div class="ex-ic"><span class="il">Reps Done</span>
+          <input class="ex-in${rv?' hv':''}" type="text" inputmode="numeric" placeholder="${ex.r}" value="${rv}" data-id="${ex.id}" data-f="reps" ${lk?'disabled':''} oninput="inp(this)">
+        </div>
+      </div>`;
+    });
+    h+=`</div>`;
+  });
+  document.getElementById('content').innerHTML=h;
+  renderProgress();
+}
+
+function renderRecovery(){
+  let total=0,done=0;
+  RECOVERY.sections.forEach(s=>s.ex.forEach(e=>{total++;if(grd(week,e.id))done++;}));
+  const pct=total?Math.round(done/total*100):0;
+  let h=`<div class="rec-intro">
+    <div class="rb"><div class="rbl">Before Play</div><div class="rbv">5 min warm-up</div><div class="rbs">Dynamic movement prep</div></div>
+    <div class="rb"><div class="rbl">After Play</div><div class="rbv">10 min stretch</div><div class="rbs">Full-body mobility</div></div>
+    <div class="rb"><div class="rbl">Then</div><div class="rbv">8–10 min core</div><div class="rbs">2–3 rounds · same all 8 weeks</div></div>
+    <div class="rb" style="min-width:140px"><div class="rbl">Today's Progress</div><div class="rbv">${done}/${total} done</div><div class="rpbar"><div class="rpfill" style="width:${pct}%"></div></div></div>
+  </div>`;
+  RECOVERY.sections.forEach(sec=>{
+    const sd=sec.ex.filter(e=>grd(week,e.id)).length;
+    h+=`<div class="section">
+      <div class="sec-hdr"><div class="sec-dot ${sec.d}"></div><span class="sec-title">${sec.t}</span><span class="sec-right">${sd}/${sec.ex.length}</span></div>
+      <div class="rec-list">`;
+    sec.ex.forEach(ex=>{
+      const dn=grd(week,ex.id);
+      h+=`<div class="rec-row${dn?' done':''}" onclick="toggleRec('${ex.id}')">
+        <div class="rchk"><div class="cbox"><span class="cmark">✓</span></div></div>
+        <div class="rec-name">
+          <div class="rec-name-text">${ex.n}${ex.yt?`<a class="yt-link" href="${ex.yt}" target="_blank" rel="noopener" onclick="event.stopPropagation()">${YT_ICON}Form</a>`:''}</div>
+          <span class="rnt">${ex.nt}</span>
+        </div>
+        <div class="rec-dur">${ex.dur}</div>
+      </div>`;
+    });
+    h+=`</div></div>`;
+  });
+  document.getElementById('content').innerHTML=h;
+}
+
+function toggleRec(id){srd(week,id,!grd(week,id));save();showSaved();renderRecovery()}
+
+function renderProgress(){
+  let h='';
+  KEY_LIFTS.forEach(lf=>{
+    let best=0,fills=[];
+    for(let w=1;w<=8;w++){const v=parseFloat(gv(lf.day,w,lf.id,'weight'))||0;fills.push(v>0);if(v>best)best=v}
+    const dots=fills.map((f,i)=>`<div class="pwd${f?' on':''}" title="Week ${i+1}"></div>`).join('');
+    h+=`<div class="pc">
+      <div class="pc-day">${lf.day.slice(0,3).toUpperCase()}</div>
+      <div class="pc-name">${lf.n}</div>
+      <div class="pc-wks">${dots}</div>
+      ${best>0?`<div class="pc-best">${best}</div><div class="pc-bl">lbs · best weight</div>`:`<div class="pc-bl" style="color:var(--text3)">No data yet</div>`}
+    </div>`;
+  });
+  const g=document.getElementById('proggrid');if(g)g.innerHTML=h;
+}
+
+function inp(el){
+  const id=el.dataset.id,f=el.dataset.f,v=el.value.trim();
+  sv(day,week,id,f,v);
+  el.classList.toggle('hv',v!=='');
+  save();showSaved();
+  if(f==='weight')renderProgress();
+}
+
+function saveData(){save();showSaved()}
+function showSaved(){const e=document.getElementById('ss');e.classList.add('on');setTimeout(()=>e.classList.remove('on'),2200)}
+function clearDay(){
+  if(day==='recovery'){
+    if(!confirm('Clear all checkboxes for this week?'))return;
+    RECOVERY.sections.forEach(s=>s.ex.forEach(e=>srd(week,e.id,false)));
+    save();renderRecovery();
+  } else {
+    if(!confirm(`Clear Week ${week} — ${day}?`))return;
+    PLAN[day].sections.forEach(s=>s.ex.forEach(ex=>{sv(day,week,ex.id,'weight','');sv(day,week,ex.id,'sets','');sv(day,week,ex.id,'reps','')}));
+    save();renderWorkout();
+  }
+}
+
+document.getElementById('wksel').addEventListener('change',function(){
+  week=parseInt(this.value);
+  if(day!=='recovery'){const p=phase(week);const b=document.getElementById('pbadge');b.textContent=p.l;b.className='phase-pill '+p.c}
+  day==='recovery'?renderRecovery():renderWorkout();
+});
+
+load();renderWorkout();
+</script>
+</body>
+</html>
