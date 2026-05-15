@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Adam's Workout Tracker</title>
+<title>Veronica's Workout Tracker</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Inter+Tight:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -105,6 +105,11 @@ header { padding: 36px 0 28px; border-bottom: 1px solid var(--border); margin-bo
 .ex-in::placeholder { color: var(--text3); font-size: 12px; font-weight: 400; }
 .ex-in.hv { color: var(--accent); font-weight: 600; border-color: var(--accent-border); background: var(--accent-bg); }
 .ex-in.sets-done.hv { color: var(--green); border-color: var(--green-border); background: var(--green-bg); }
+.edit-btn { background: none; border: none; cursor: pointer; color: var(--text3); font-size: 12px; padding: 0 3px; opacity: 0; transition: opacity 0.15s; vertical-align: middle; line-height: 1; }
+.ex-name-text:hover .edit-btn { opacity: 1; }
+.ex-name-text:hover .edit-btn:hover { color: var(--accent); }
+@media (hover: none) { .edit-btn { opacity: 1; } }
+.exnm-input { font-size: 13px; font-family: 'Inter', sans-serif; border: 1px solid var(--accent); border-radius: 5px; padding: 2px 6px; outline: none; color: var(--text); background: var(--accent-bg); width: 200px; }
 
 /* RECOVERY */
 .rec-intro { display: flex; background: var(--green-bg); border: 1px solid var(--green-border); border-radius: var(--r); overflow: hidden; margin-bottom: 20px; flex-wrap: wrap; box-shadow: var(--shadow); }
@@ -188,7 +193,7 @@ header { padding: 36px 0 28px; border-bottom: 1px solid var(--border); margin-bo
   <header>
     <div class="header-top">
       <div class="header-left">
-        <h1>Adam's <span>Workout</span> Tracker</h1>
+        <h1>Veronica's <span>Workout</span> Tracker</h1>
         <div class="header-meta">
           <div id="pbadge" class="phase-pill p1">🔵 Phase 1 — Learn the Movements</div>
         </div>
@@ -204,10 +209,12 @@ header { padding: 36px 0 28px; border-bottom: 1px solid var(--border); margin-bo
   </header>
 
   <div class="tabs">
-    <button class="tab active" onclick="switchDay('monday')"><span class="te">💪</span><span>Monday</span><span class="tl">Upper Body</span></button>
-    <button class="tab" onclick="switchDay('wednesday')"><span class="te">🦵</span><span>Wednesday</span><span class="tl">Lower + Core</span></button>
-    <button class="tab" onclick="switchDay('friday')"><span class="te">⚡</span><span>Friday</span><span class="tl">Full Body</span></button>
-    <button class="tab" onclick="switchDay('recovery')"><span class="te">🤸</span><span>Tue/Thu/Sat</span><span class="tl">Stretch + Core</span></button>
+    <button class="tab active" onclick="switchDay('monday')"><span class="te">💪</span><span>Mon</span><span class="tl">Push</span></button>
+    <button class="tab" onclick="switchDay('tuesday')"><span class="te">🏋️</span><span>Tue</span><span class="tl">Pull</span></button>
+    <button class="tab" onclick="switchDay('wednesday')"><span class="te">🦵</span><span>Wed</span><span class="tl">Legs & Glutes</span></button>
+    <button class="tab" onclick="switchDay('thursday')"><span class="te">🔥</span><span>Thu</span><span class="tl">Core & Cardio</span></button>
+    <button class="tab" onclick="switchDay('friday')"><span class="te">⚡</span><span>Fri</span><span class="tl">Full Body</span></button>
+    <button class="tab" onclick="switchDay('recovery')"><span class="te">🤸</span><span>Rest</span><span class="tl">Stretch</span></button>
   </div>
 
   <div id="content"></div>
@@ -231,132 +238,144 @@ header { padding: 36px 0 28px; border-bottom: 1px solid var(--border); margin-bo
 const YT_ICON=`<svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1C24 15.9 24 12 24 12s0-3.9-.5-5.8zM9.6 15.6V8.4l6.3 3.6-6.3 3.6z"/></svg>`;
 
 const PLAN = {
-  monday:{label:"Monday — Upper Body",sections:[
-    {t:"Section 1 — Horizontal Push/Pull (Superset A/B)",d:"dp",ex:[
-      {id:"mon_bench",n:"A) Dumbbell Bench Press",s:"3",r:"10",yt:"https://www.youtube.com/results?search_query=dumbbell+bench+press+form"},
-      {id:"mon_meadows",n:"B) Meadows Row (each side)",s:"3",r:"10 each",nt:"Rest 60s between pairs",yt:"https://www.youtube.com/results?search_query=meadows+row+form"},
+  monday:{label:"Monday — Push",sections:[
+    {t:"Section 1 — Chest",d:"dp",ex:[
+      {id:"mon_cablefly",n:"Cable Chest Fly (high to low)",s:"3",r:"12",yt:"https://www.youtube.com/results?search_query=cable+chest+fly+high+to+low+form"},
+      {id:"mon_decline",n:"Decline DB Press",s:"3",r:"10",yt:"https://www.youtube.com/results?search_query=decline+dumbbell+press+form"},
     ]},
-    {t:"Section 2 — Vertical Push/Pull (Superset A/B)",d:"dpu",ex:[
-      {id:"mon_landmine",n:"A) Landmine Press",s:"3",r:"10",yt:"https://www.youtube.com/results?search_query=landmine+press+form"},
-      {id:"mon_pulldown",n:"B) Lat Pulldown",s:"3",r:"10",yt:"https://www.youtube.com/results?search_query=lat+pulldown+form"},
+    {t:"Section 2 — Shoulders",d:"ds",ex:[
+      {id:"mon_arnold",n:"Arnold Press",s:"4",r:"10",yt:"https://www.youtube.com/results?search_query=arnold+press+form"},
+      {id:"mon_cablelat",n:"Single-Arm Cable Lateral Raise",s:"3",r:"15 each",yt:"https://www.youtube.com/results?search_query=single+arm+cable+lateral+raise+form"},
+      {id:"mon_frontrise",n:"Seated DB Front Raise (alternating)",s:"3",r:"12 each",yt:"https://www.youtube.com/results?search_query=seated+dumbbell+front+raise+form"},
     ]},
-    {t:"Section 3 — Shoulder Health + Chest Isolation",d:"ds",ex:[
-      {id:"mon_trxfly",n:"TRX Chest Fly",s:"3",r:"12",yt:"https://www.youtube.com/results?search_query=TRX+chest+fly+form"},
-      {id:"mon_facepull",n:"Face Pulls",s:"3",r:"15",yt:"https://www.youtube.com/results?search_query=face+pulls+form"},
-      {id:"mon_pullpart",n:"Banded Pull-Apart",s:"3",r:"15",yt:"https://www.youtube.com/results?search_query=banded+pull+apart+form"},
-    ]},
-    {t:"Section 4 — Arms Finisher (Superset A/B)",d:"da",ex:[
-      {id:"mon_hammer",n:"A) Hammer Curls",s:"3",r:"12",yt:"https://www.youtube.com/results?search_query=hammer+curls+form"},
-      {id:"mon_pushdown",n:"B) Tricep Pushdown (cable)",s:"3",r:"12",nt:"Superset — rest 60s between pairs",yt:"https://www.youtube.com/results?search_query=tricep+pushdown+cable+form"},
-      {id:"mon_preacher",n:"A) Preacher Curl Machine",s:"2",r:"12",yt:"https://www.youtube.com/results?search_query=preacher+curl+form"},
-      {id:"mon_ohtricep",n:"B) Overhead Tricep Extension",s:"2",r:"12",yt:"https://www.youtube.com/results?search_query=overhead+tricep+extension+form"},
-      {id:"mon_skull",n:"Skull Crushers",s:"2",r:"10",lock:[1,2],nt:"Weeks 5–8 only",yt:"https://www.youtube.com/results?search_query=skull+crushers+form"},
+    {t:"Section 3 — Triceps",d:"da",ex:[
+      {id:"mon_cableoh",n:"Cable Overhead Tricep Extension",s:"3",r:"12",yt:"https://www.youtube.com/results?search_query=cable+overhead+tricep+extension+form"},
+      {id:"mon_kickback",n:"Incline Tricep Kickback",s:"3",r:"12",yt:"https://www.youtube.com/results?search_query=incline+tricep+kickback+form"},
+      {id:"mon_dips",n:"Dips",s:"3",r:"10",nt:"Add weight from week 3",yt:"https://www.youtube.com/results?search_query=dips+exercise+form"},
     ]},
   ]},
-  wednesday:{label:"Wednesday — Lower Body + Core",sections:[
-    {t:"Section 1 — Legs",d:"dl",ex:[
-      {id:"wed_bss",n:"KB Bulgarian Split Squat",s:"3→4",r:"8→10 each",nt:"Add KB from week 2",yt:"https://www.youtube.com/results?search_query=bulgarian+split+squat+form"},
-      {id:"wed_rdl",n:"Romanian Deadlift",s:"3",r:"10→12",yt:"https://www.youtube.com/results?search_query=romanian+deadlift+form"},
-      {id:"wed_legpress",n:"Leg Press",s:"3",r:"12",yt:"https://www.youtube.com/results?search_query=leg+press+form"},
-      {id:"wed_calf",n:"Calf Raises",s:"3",r:"15",yt:"https://www.youtube.com/results?search_query=calf+raises+form"},
+  tuesday:{label:"Tuesday — Pull",sections:[
+    {t:"Section 1 — Back",d:"dpu",ex:[
+      {id:"tue_csrow",n:"Chest-Supported DB Row",s:"4",r:"10",yt:"https://www.youtube.com/results?search_query=chest+supported+dumbbell+row+form"},
+      {id:"tue_straightarm",n:"Cable Straight-Arm Pulldown",s:"3",r:"12",yt:"https://www.youtube.com/results?search_query=cable+straight+arm+pulldown+form"},
+      {id:"tue_trxrow",n:"TRX Row",s:"3",r:"12",yt:"https://www.youtube.com/results?search_query=TRX+row+form"},
     ]},
-    {t:"Section 2 — Hamstrings",d:"dh",ex:[
-      {id:"wed_nordic",n:"Nordic Hamstring Curl",s:"3",r:"5→8→10",nt:"Slow controlled negatives only",yt:"https://www.youtube.com/results?search_query=nordic+hamstring+curl+form"},
+    {t:"Section 2 — Rear Delts",d:"ds",ex:[
+      {id:"tue_revfly",n:"Reverse Fly (incline bench)",s:"3",r:"15",yt:"https://www.youtube.com/results?search_query=reverse+fly+incline+bench+form"},
+      {id:"tue_facepull",n:"Cable Face Pull",s:"3",r:"15",yt:"https://www.youtube.com/results?search_query=cable+face+pull+form"},
     ]},
-    {t:"Section 3 — Core + Carries",d:"dc",ex:[
-      {id:"wed_pallof",n:"Pallof Press with Rotation",s:"3",r:"10→12→15 each",yt:"https://www.youtube.com/results?search_query=pallof+press+rotation+form"},
-      {id:"wed_deadbug",n:"Dead Bug",s:"3",r:"10",yt:"https://www.youtube.com/results?search_query=dead+bug+exercise+form"},
-      {id:"wed_farmer",n:"Farmer's Carry",s:"3",r:"30m",lock:[1],nt:"Weeks 3–8 only",yt:"https://www.youtube.com/results?search_query=farmers+carry+form"},
-      {id:"wed_plank",n:"Plank",s:"3",r:"30–45 sec",yt:"https://www.youtube.com/results?search_query=plank+form"},
+    {t:"Section 3 — Biceps",d:"da",ex:[
+      {id:"tue_zottman",n:"Zottman Curls",s:"3",r:"10",yt:"https://www.youtube.com/results?search_query=zottman+curls+form"},
+      {id:"tue_cablehammer",n:"Cable Hammer Curl",s:"3",r:"12",yt:"https://www.youtube.com/results?search_query=cable+hammer+curl+form"},
+      {id:"tue_spider",n:"Spider Curls",s:"3",r:"10",yt:"https://www.youtube.com/results?search_query=spider+curls+form"},
     ]},
   ]},
-  friday:{label:"Friday — Full Body + Cardio",sections:[
-    {t:"Section 1 — Full Body Compound",d:"dco",ex:[
-      {id:"fri_lmsqpress",n:"Landmine Squat-to-Press",s:"3→4",r:"10→8",yt:"https://www.youtube.com/results?search_query=landmine+squat+to+press+form"},
-      {id:"fri_trap",n:"Trap Bar Deadlift",s:"3→4",r:"8→6",lock:[1],nt:"Weeks 3–8 only",yt:"https://www.youtube.com/results?search_query=trap+bar+deadlift+form"},
-      {id:"fri_dbrow",n:"Single-Arm DB Row",s:"3",r:"10 each",yt:"https://www.youtube.com/results?search_query=single+arm+dumbbell+row+form"},
-      {id:"fri_stepup",n:"Step-Ups (each leg)",s:"3",r:"10 each",yt:"https://www.youtube.com/results?search_query=step+ups+exercise+form"},
+  wednesday:{label:"Wednesday — Legs & Glutes",sections:[
+    {t:"Section 1 — Quads",d:"dl",ex:[
+      {id:"wed_hacksquat",n:"Hack Squat",s:"4",r:"10",yt:"https://www.youtube.com/results?search_query=hack+squat+form"},
+      {id:"wed_walkinglunge",n:"Walking Lunges (DB)",s:"3",r:"12 each",yt:"https://www.youtube.com/results?search_query=walking+lunges+dumbbell+form"},
     ]},
-    {t:"Section 2 — Turkish Get-Up",d:"dt",ex:[
-      {id:"fri_tgu",n:"Turkish Get-Up (each side)",s:"3",r:"3→4 each",nt:"Start light — this is a skill movement",yt:"https://www.youtube.com/results?search_query=turkish+get+up+form"},
+    {t:"Section 2 — Glutes & Hamstrings",d:"dh",ex:[
+      {id:"wed_sumo",n:"Sumo Deadlift",s:"4",r:"8",yt:"https://www.youtube.com/results?search_query=sumo+deadlift+form"},
+      {id:"wed_slrdl",n:"Single-Leg Romanian Deadlift",s:"3",r:"10 each",yt:"https://www.youtube.com/results?search_query=single+leg+romanian+deadlift+form"},
+      {id:"wed_cablekick",n:"Cable Kickback",s:"3",r:"15 each",yt:"https://www.youtube.com/results?search_query=cable+kickback+glute+form"},
     ]},
-    {t:"Section 3 — Cardio Finisher",d:"dca",ex:[
-      {id:"fri_kbswing",n:"KB Swings",s:"3→5",r:"15→20",yt:"https://www.youtube.com/results?search_query=kettlebell+swing+form"},
-      {id:"fri_sled",n:"Sled Push",s:"4→6",r:"20m",lock:[1],nt:"Weeks 3–8 only",yt:"https://www.youtube.com/results?search_query=sled+push+form"},
-      {id:"fri_ropes",n:"Battle Ropes",s:"3",r:"30s on/30s off",lock:[1,2],nt:"Weeks 5–8 only",yt:"https://www.youtube.com/results?search_query=battle+ropes+form"},
-      {id:"fri_row",n:"Rowing Machine",s:"1",r:"8–10 min",yt:"https://www.youtube.com/results?search_query=rowing+machine+form+technique"},
+    {t:"Section 3 — Isolation & Calves",d:"dc",ex:[
+      {id:"wed_goodmorning",n:"Good Mornings",s:"3",r:"12",yt:"https://www.youtube.com/results?search_query=good+mornings+exercise+form"},
+      {id:"wed_seatedcalf",n:"Seated Calf Raises",s:"4",r:"15",yt:"https://www.youtube.com/results?search_query=seated+calf+raises+form"},
+    ]},
+  ]},
+  thursday:{label:"Thursday — Core & Cardio",sections:[
+    {t:"Section 1 — Core",d:"dc",ex:[
+      {id:"thu_abwheel",n:"Ab Wheel Rollout",s:"3",r:"10",yt:"https://www.youtube.com/results?search_query=ab+wheel+rollout+form"},
+      {id:"thu_pallof",n:"Pallof Press",s:"3",r:"12 each",yt:"https://www.youtube.com/results?search_query=pallof+press+form"},
+      {id:"thu_hangleg",n:"Hanging Leg Raise",s:"3",r:"12",yt:"https://www.youtube.com/results?search_query=hanging+leg+raise+form"},
+      {id:"thu_landrot",n:"Landmine Rotation",s:"3",r:"10 each",yt:"https://www.youtube.com/results?search_query=landmine+rotation+form"},
+    ]},
+    {t:"Section 2 — Conditioning",d:"dca",ex:[
+      {id:"thu_woodchop",n:"Cable Woodchop",s:"3",r:"12 each",yt:"https://www.youtube.com/results?search_query=cable+woodchop+form"},
+      {id:"thu_ropes",n:"Battle Ropes",s:"4",r:"30 sec on / 30 sec off",yt:"https://www.youtube.com/results?search_query=battle+ropes+form"},
+      {id:"thu_sled",n:"Sled Push",s:"4",r:"20m",yt:"https://www.youtube.com/results?search_query=sled+push+form"},
+    ]},
+  ]},
+  friday:{label:"Friday — Full Body",sections:[
+    {t:"Section 1 — Compound",d:"dco",ex:[
+      {id:"fri_lmsqpress",n:"Landmine Squat-to-Press",s:"4",r:"8",yt:"https://www.youtube.com/results?search_query=landmine+squat+to+press+form"},
+      {id:"fri_tgu",n:"Turkish Get-Up (each side)",s:"3",r:"4 each",nt:"Start light — this is a skill movement",yt:"https://www.youtube.com/results?search_query=turkish+get+up+form"},
+      {id:"fri_cleanpress",n:"DB Clean and Press",s:"3",r:"10",yt:"https://www.youtube.com/results?search_query=dumbbell+clean+and+press+form"},
+    ]},
+    {t:"Section 2 — Accessory",d:"dp",ex:[
+      {id:"fri_renegade",n:"Renegade Row",s:"3",r:"8 each",yt:"https://www.youtube.com/results?search_query=renegade+row+form"},
+      {id:"fri_boxjump",n:"Box Jumps",s:"3",r:"8",yt:"https://www.youtube.com/results?search_query=box+jumps+form"},
+    ]},
+    {t:"Section 3 — Finisher",d:"dca",ex:[
+      {id:"fri_kbswing",n:"KB Swings",s:"4",r:"20",yt:"https://www.youtube.com/results?search_query=kettlebell+swing+form"},
     ]},
   ]},
 };
 
 const RECOVERY = {sections:[
-  {t:"Dynamic Warm-Up — 5 min BEFORE you play",d:"dw",ex:[
-    {id:"r_armcircles",n:"Arm Circles",dur:"10 each way",nt:"Small to large — wake up shoulders before serves",yt:"https://www.youtube.com/results?search_query=arm+circles+warmup"},
+  {t:"Dynamic Warm-Up — 5–8 min",d:"dw",ex:[
+    {id:"r_armcircles",n:"Arm Circles",dur:"10 each way",nt:"Small to large · wakes up shoulders",yt:"https://www.youtube.com/results?search_query=arm+circles+warmup"},
     {id:"r_legswfb",n:"Leg Swings — front/back",dur:"10 each leg",nt:"Hold wall for balance · loosens hip flexors + hamstrings",yt:"https://www.youtube.com/results?search_query=leg+swings+front+back+warmup"},
-    {id:"r_legswss",n:"Leg Swings — side to side",dur:"10 each leg",nt:"Critical for lateral movement on the squash court",yt:"https://www.youtube.com/results?search_query=leg+swings+side+to+side+warmup"},
     {id:"r_lungerot",n:"Walking Lunges with Rotation",dur:"8 each leg",nt:"Rotate torso toward front leg · opens hips + thoracic spine",yt:"https://www.youtube.com/results?search_query=walking+lunge+with+rotation"},
     {id:"r_inchworm",n:"Inchworms",dur:"5 reps",nt:"Walk hands to plank, walk feet up · full-body prep",yt:"https://www.youtube.com/results?search_query=inchworm+exercise"},
-    {id:"r_shuffle",n:"Lateral Shuffles",dur:"20 seconds",nt:"Low athletic stance · mimics court movement",yt:"https://www.youtube.com/results?search_query=lateral+shuffle+warmup"},
-    {id:"r_catcow",n:"Cat-Cow",dur:"8 reps",nt:"Slow and deliberate · spine mobility before impact",yt:"https://www.youtube.com/results?search_query=cat+cow+stretch"},
+    {id:"r_catcow",n:"Cat-Cow",dur:"8 reps",nt:"Slow and deliberate · spine mobility",yt:"https://www.youtube.com/results?search_query=cat+cow+stretch"},
+    {id:"r_hipcircle",n:"Hip Circles",dur:"10 each direction",nt:"Hands on hips · full range of motion",yt:"https://www.youtube.com/results?search_query=hip+circles+warmup"},
   ]},
-  {t:"Full-Body Stretch — 10 min AFTER you play",d:"dstr",ex:[
-    {id:"r_pigeon",n:"Pigeon Pose (each side)",dur:"45 sec",nt:"Glutes + deep hip rotators · #1 stretch for lateral sports",yt:"https://www.youtube.com/results?search_query=pigeon+pose+stretch"},
+  {t:"Full-Body Stretch — 10 min",d:"dstr",ex:[
+    {id:"r_pigeon",n:"Pigeon Pose (each side)",dur:"45 sec",nt:"Glutes + deep hip rotators",yt:"https://www.youtube.com/results?search_query=pigeon+pose+stretch"},
     {id:"r_couch",n:"Couch Stretch / Hip Flexor",dur:"45 sec each",nt:"Back foot on wall · opens locked-up hip flexors",yt:"https://www.youtube.com/results?search_query=couch+stretch+hip+flexor"},
     {id:"r_hamstring",n:"Hamstring Stretch (each side)",dur:"45 sec",nt:"Long exhale into the stretch · protects low back",yt:"https://www.youtube.com/results?search_query=hamstring+stretch"},
-    {id:"r_quad",n:"Standing Quad Stretch",dur:"30 sec each",nt:"Grab ankle behind you · balance counts as core work",yt:"https://www.youtube.com/results?search_query=standing+quad+stretch"},
     {id:"r_figure4",n:"Figure-4 Glute Stretch",dur:"30 sec each",nt:"Lying on back · ankle over opposite knee, pull toward chest",yt:"https://www.youtube.com/results?search_query=figure+4+glute+stretch"},
-    {id:"r_calf",n:"Standing Calf Stretch",dur:"30 sec each",nt:"Back heel pressed down · racket sports tax calves hard",yt:"https://www.youtube.com/results?search_query=standing+calf+stretch"},
-    {id:"r_thoracic",n:"Thoracic Spine Rotation",dur:"10 reps each",nt:"On all fours, hand behind head, rotate open — unlocks torso",yt:"https://www.youtube.com/results?search_query=thoracic+spine+rotation+stretch"},
-    {id:"r_shoulder",n:"Cross-Body Shoulder Stretch",dur:"30 sec each",nt:"Gentle · rotator cuff care after serving and smashing",yt:"https://www.youtube.com/results?search_query=cross+body+shoulder+stretch"},
+    {id:"r_thoracic",n:"Thoracic Spine Rotation",dur:"10 reps each",nt:"On all fours, hand behind head, rotate open",yt:"https://www.youtube.com/results?search_query=thoracic+spine+rotation+stretch"},
     {id:"r_doorway",n:"Doorway Chest Stretch",dur:"45 sec",nt:"Forearms on door frame, step through · opens tight pecs",yt:"https://www.youtube.com/results?search_query=doorway+chest+stretch"},
-    {id:"r_wrist",n:"Wrist Flexor + Extensor",dur:"20 sec each",nt:"Palm up then palm down · prevents racquet elbow",yt:"https://www.youtube.com/results?search_query=wrist+flexor+extensor+stretch"},
-    {id:"r_child",n:"Child's Pose",dur:"60 sec",nt:"Long breaths · your cooldown full stop",yt:"https://www.youtube.com/results?search_query=childs+pose+stretch"},
+    {id:"r_child",n:"Child's Pose",dur:"60 sec",nt:"Long breaths · full cooldown",yt:"https://www.youtube.com/results?search_query=childs+pose+stretch"},
   ]},
-  {t:"Core Circuit — 8–10 min AFTER stretching · 2–3 rounds",d:"dcd",ex:[
+  {t:"Core Circuit — 2–3 rounds",d:"dcd",ex:[
     {id:"r_deadbug",n:"Dead Bug",dur:"10 each side",nt:"Low back pressed to floor · slow and controlled",yt:"https://www.youtube.com/results?search_query=dead+bug+exercise+form"},
-    {id:"r_birddog",n:"Bird Dog",dur:"10 each side",nt:"Opposite arm + leg · pause 1 sec at top · anti-rotation",yt:"https://www.youtube.com/results?search_query=bird+dog+exercise+form"},
-    {id:"r_sideplank",n:"Side Plank (each side)",dur:"20–30 sec",nt:"Stack feet · obliques power your squash swing",yt:"https://www.youtube.com/results?search_query=side+plank+form"},
-    {id:"r_plank",n:"Plank",dur:"30–45 sec",nt:"Ribs tucked, glutes squeezed · quality over duration",yt:"https://www.youtube.com/results?search_query=plank+form"},
+    {id:"r_birddog",n:"Bird Dog",dur:"10 each side",nt:"Opposite arm + leg · pause 1 sec at top",yt:"https://www.youtube.com/results?search_query=bird+dog+exercise+form"},
+    {id:"r_sideplank",n:"Side Plank (each side)",dur:"20–30 sec",nt:"Stack feet · quality over duration",yt:"https://www.youtube.com/results?search_query=side+plank+form"},
     {id:"r_hollow",n:"Hollow Body Hold",dur:"20–30 sec",nt:"Low back glued down · bend knees if needed",yt:"https://www.youtube.com/results?search_query=hollow+body+hold+form"},
     {id:"r_russian",n:"Russian Twists",dur:"20 total",nt:"Bodyweight fine · add light med ball from week 5",yt:"https://www.youtube.com/results?search_query=russian+twists+form"},
   ]},
 ]};
 
 const KEY_LIFTS=[
-  {id:"mon_bench",n:"DB Bench Press",day:"monday"},
-  {id:"mon_landmine",n:"Landmine Press",day:"monday"},
-  {id:"mon_meadows",n:"Meadows Row",day:"monday"},
-  {id:"mon_pulldown",n:"Lat Pulldown",day:"monday"},
-  {id:"mon_hammer",n:"Hammer Curls",day:"monday"},
-  {id:"wed_bss",n:"Bulgarian Split Squat",day:"wednesday"},
-  {id:"wed_rdl",n:"Romanian Deadlift",day:"wednesday"},
-  {id:"wed_legpress",n:"Leg Press",day:"wednesday"},
+  {id:"mon_arnold",n:"Arnold Press",day:"monday"},
+  {id:"mon_cablefly",n:"Cable Chest Fly",day:"monday"},
+  {id:"tue_csrow",n:"Chest-Supported DB Row",day:"tuesday"},
+  {id:"tue_zottman",n:"Zottman Curls",day:"tuesday"},
+  {id:"wed_hacksquat",n:"Hack Squat",day:"wednesday"},
+  {id:"wed_sumo",n:"Sumo Deadlift",day:"wednesday"},
+  {id:"wed_slrdl",n:"Single-Leg RDL",day:"wednesday"},
   {id:"fri_lmsqpress",n:"Landmine Squat-to-Press",day:"friday"},
-  {id:"fri_trap",n:"Trap Bar Deadlift",day:"friday"},
   {id:"fri_tgu",n:"Turkish Get-Up",day:"friday"},
-  {id:"fri_kbswing",n:"KB Swings (weight)",day:"friday"},
+  {id:"fri_kbswing",n:"KB Swings",day:"friday"},
 ];
 
-const SEED={
-  "monday_w1_mon_bench_weight":"135","monday_w1_mon_bench_reps":"10x4",
-  "monday_w1_mon_landmine_weight":"20","monday_w1_mon_landmine_reps":"10x3",
-  "monday_w1_mon_pulldown_weight":"88","monday_w1_mon_pulldown_reps":"10x3",
-  "monday_w1_mon_trxfly_weight":"N/A","monday_w1_mon_trxfly_reps":"10x3",
-  "monday_w1_mon_facepull_weight":"33","monday_w1_mon_facepull_reps":"15x3",
-  "monday_w1_mon_hammer_weight":"20","monday_w1_mon_hammer_reps":"12x3",
-  "monday_w1_mon_pushdown_weight":"27","monday_w1_mon_pushdown_reps":"12x3",
-  "monday_w1_mon_preacher_weight":"30","monday_w1_mon_preacher_reps":"10x3",
-  "monday_w1_mon_ohtricep_weight":"17.5","monday_w1_mon_ohtricep_reps":"10",
-  "friday_w1_fri_lmsqpress_weight":"45","friday_w1_fri_lmsqpress_reps":"10x3",
-  "friday_w1_fri_trap_weight":"50","friday_w1_fri_trap_reps":"10x3",
-  "friday_w1_fri_dbrow_weight":"40","friday_w1_fri_dbrow_reps":"10x3",
-  "friday_w1_fri_stepup_weight":"0","friday_w1_fri_stepup_reps":"10x3",
-  "friday_w1_fri_tgu_weight":"6","friday_w1_fri_kbswing_weight":"24",
-};
+const SEED={};
 
-let day='monday',week=1,data={};
-function load(){try{const s=localStorage.getItem('wt_v3');data=s?JSON.parse(s):{...SEED};if(!s)save()}catch(e){data={...SEED}}}
-function save(){try{localStorage.setItem('wt_v3',JSON.stringify(data))}catch(e){}}
+let day='monday',week=1,data={},customNames={};
+function loadNames(){try{customNames=JSON.parse(localStorage.getItem('wt_vron_names')||'{}')}catch(e){customNames={}}}
+function saveNames(){try{localStorage.setItem('wt_vron_names',JSON.stringify(customNames))}catch(e){}}
+function getExName(id,def){return customNames[id]||def}
+function makeYT(name){return`https://www.youtube.com/results?search_query=${encodeURIComponent(name+' exercise form')}`}
+function startEdit(id){
+  const span=document.getElementById('exnm_'+id);
+  if(!span)return;
+  const cur=span.textContent;
+  span.outerHTML=`<input class="exnm-input" id="exnm_${id}" type="text" value="${cur.replace(/"/g,'&quot;')}" onblur="saveEdit('${id}',this.value)" onkeydown="if(event.key==='Enter')this.blur();else if(event.key==='Escape')renderWorkout()">`;
+  const inp=document.getElementById('exnm_'+id);
+  if(inp){inp.focus();inp.select()}
+}
+function saveEdit(id,newName){
+  newName=newName.trim();
+  if(newName){customNames[id]=newName;saveNames()}
+  renderWorkout();
+}
+function load(){loadNames();try{const s=localStorage.getItem('wt_vron_v1');data=s?JSON.parse(s):{};if(!s)save()}catch(e){data={}}}
+function save(){try{localStorage.setItem('wt_vron_v1',JSON.stringify(data))}catch(e){}}
 function gv(d,w,id,f){return data[`${d}_w${w}_${id}_${f}`]||''}
 function sv(d,w,id,f,v){const k=`${d}_w${w}_${id}_${f}`;if(v==='')delete data[k];else data[k]=v}
 function grd(w,id){return!!data[`rec_w${w}_${id}`]}
@@ -371,7 +390,7 @@ function locked(ex,w){if(!ex.lock)return false;const p=w<=2?1:w<=4?2:0;return ex
 
 function switchDay(d){
   day=d;
-  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',['monday','wednesday','friday','recovery'][i]===d));
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',['monday','tuesday','wednesday','thursday','friday','recovery'][i]===d));
   document.getElementById('progsec').style.display=d==='recovery'?'none':'';
   if(d==='recovery'){
     renderRecovery();
@@ -409,7 +428,7 @@ function renderWorkout(){
       const rv=gv(day,week,ex.id,'reps');
       h+=`<div class="ex-row${lk?' locked':''}">
         <div class="ex-n">
-          <div class="ex-name-text">${ex.n}${ytLink(ex.yt)}</div>
+          <div class="ex-name-text"><span class="exnm" id="exnm_${ex.id}">${getExName(ex.id,ex.n)}</span><button class="edit-btn" onclick="startEdit('${ex.id}')" title="Edit name">✏</button>${ytLink(customNames[ex.id]?makeYT(customNames[ex.id]):ex.yt)}</div>
           ${ex.nt?`<span class="ex-note">${ex.nt}</span>`:''}
         </div>
         <div class="ex-stat"><span class="stat-label">Target</span><span class="stat-val">${ex.s}</span></div>
@@ -436,9 +455,9 @@ function renderRecovery(){
   RECOVERY.sections.forEach(s=>s.ex.forEach(e=>{total++;if(grd(week,e.id))done++;}));
   const pct=total?Math.round(done/total*100):0;
   let h=`<div class="rec-intro">
-    <div class="rb"><div class="rbl">Before Play</div><div class="rbv">5 min warm-up</div><div class="rbs">Dynamic movement prep</div></div>
-    <div class="rb"><div class="rbl">After Play</div><div class="rbv">10 min stretch</div><div class="rbs">Full-body mobility</div></div>
-    <div class="rb"><div class="rbl">Then</div><div class="rbv">8–10 min core</div><div class="rbs">2–3 rounds · same all 8 weeks</div></div>
+    <div class="rb"><div class="rbl">Warm-Up</div><div class="rbv">5–8 min</div><div class="rbs">Dynamic movement prep</div></div>
+    <div class="rb"><div class="rbl">Stretch</div><div class="rbv">10 min</div><div class="rbs">Full-body mobility</div></div>
+    <div class="rb"><div class="rbl">Core Circuit</div><div class="rbv">8–10 min</div><div class="rbs">2–3 rounds</div></div>
     <div class="rb" style="min-width:140px"><div class="rbl">Today's Progress</div><div class="rbv">${done}/${total} done</div><div class="rpbar"><div class="rpfill" style="width:${pct}%"></div></div></div>
   </div>`;
   RECOVERY.sections.forEach(sec=>{
@@ -472,7 +491,7 @@ function renderProgress(){
     const dots=fills.map((f,i)=>`<div class="pwd${f?' on':''}" title="Week ${i+1}"></div>`).join('');
     h+=`<div class="pc">
       <div class="pc-day">${lf.day.slice(0,3).toUpperCase()}</div>
-      <div class="pc-name">${lf.n}</div>
+      <div class="pc-name">${getExName(lf.id,lf.n)}</div>
       <div class="pc-wks">${dots}</div>
       ${best>0?`<div class="pc-best">${best}</div><div class="pc-bl">lbs · best weight</div>`:`<div class="pc-bl" style="color:var(--text3)">No data yet</div>`}
     </div>`;
